@@ -117,5 +117,21 @@ python run_model.py --mode eval --patient_records_file_supervised_hop data/super
 
 After preparing all the required datasets:
 
-(1) 
+(1) train the model based on a fixed number of reading on MemNN, and the model will be saved to the file indicated by --save_model_dir
+
+python run_model --mode fixed_hop_train --save_model_dir data/model/fixed_hop_model 
+
+(2) generate the appropriate number of hops of reading on MemNN for each patient based on the model from step 1, which would be used as the supervision of the adaptive multi-hop reading on MemNN in the next step. Specify the model you want to load with --load_model_name, and the result would be saved to the file indicated by --save_supervised_hop_dir
+
+python run_model --mode generate_adaptive_hop --load_model_name data/fixed_hop_model/your_model --save_supervised_hop_dir data/supervised_hop_data
+
+(3) train the model to adaptively decide the number of hops of reading on MemNN. Use --patient_records_file_supervised_hop to specify the supervision data you want to use, and the model would be saved to the file indicated by --save_model_dir
+
+python run_model --mode adaptive_hop_train --load_model_name data/fixed_hop_model/your_model --patient_records_file_supervised_hop data/supervised_hop_data/records_supervised_hop.pkl --save_model_dir data/model/adaptive_model
+
+(4) evaluate the model
+
+python run_model.py --mode eval --patient_records_file_supervised_hop data/supervised_hop_data/records_supervised_hop.pkl --load_model_name data/model/adaptive_model/your_model --save_predict_results_dir data
+
+
 
